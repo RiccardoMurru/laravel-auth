@@ -34,7 +34,10 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('posts.index') }}">Posts</a>
+                            <a class="nav-link" href="{{ route('admin.posts.index') }}">Posts Archive</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.home') }}">View Site</a>
                         </li>
                     </ul>
 

@@ -34,7 +34,11 @@
         <p>Updated at: {{ $post->updated_at }}</p>
         <div class="actions d-flex justify-content-around align-items-center">
             <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-outline-primary">Edit</a>
-            <a href="" class="btn btn-outline-danger">Delete</a>
+            <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <input class="btn btn-outline-danger" type="submit" value="Delete">
+            </form>
         </div>
     </div>
 </div>

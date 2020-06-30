@@ -8,6 +8,9 @@ use App\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewPost;
+use App\Mail\UpdatePost;
 
 class PostsController extends Controller
 {
@@ -59,16 +62,17 @@ class PostsController extends Controller
         $new_post->user_id = $user_id;
         $new_post->slug = $slug;
 
-        
-
         // store image
-        $data['img_path'] = Storage::disk('public')->put('images', $data['img_path']);
-        $new_post->img_path = $data['img_path'];
+        if (!empty($data['img_path'])) {
+            $data['img_path'] = Storage::disk('public')->put('images', $data['img_path']);
+            $new_post->img_path = $data['img_path'];
+        }
 
         $saved_post = $new_post->save();
 
         if ($saved_post) {
-
+            
+            Mail::to('example@mail.com')->send(new NewPost($new_post));
             return redirect()->route('admin.posts.show', $new_post->id)->with('save_success', $new_post->title);
         }
     }
@@ -126,9 +130,13 @@ class PostsController extends Controller
             $post->img_path = $data['img_path'];
         }
 
-        $updated_post = $post->update();
+        $updated_post = $post->update($data);
         
         if ($updated_post) {
+            $user = Auth::user();
+            $mail = $user->email;
+
+            Mail::to($mail)->send(new UpdatePost($post));
 
             return redirect()->route('admin.posts.show', $post->id)->with('update_success', $post->title);
         }
@@ -141,9 +149,18 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $title = $post->title;
+        $deleted_post = $post->delete();
+
+        if ($deleted_post) {
+            // delete img
+            if (!empty($post->img_path)) {
+                Storage::disk('public')->delete($post->img_path);
+            }
+            return redirect()->route('admin.posts.index')->with('delete_success', $title);
+        }
     }
 
     /**

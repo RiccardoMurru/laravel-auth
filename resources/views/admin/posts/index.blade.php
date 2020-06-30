@@ -2,7 +2,15 @@
 
 @section('content')
 <div class="container">
-    <h1 class="my-4">Post Archive</h1>
+    @if (session('success'))
+        <div class="alert alert-success">
+            New post: {{ session('success') }} created!
+        </div>
+    @endif
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="my-4">Post Archive</h1>
+        <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">New Post</a>
+    </div>
 
     @foreach ($posts as $post)
     <div class="post mb-3">

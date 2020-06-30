@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PostsController extends Controller
 {
@@ -31,7 +32,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.posts.create');
     }
 
     /**
@@ -42,7 +43,30 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validazione
+        $request->validate($this->validation_rules());
+
+        // acquisizione dati
+        $data = $request->all();
+        $user_id = Auth::id();
+        $title = $data['title'];
+        $slug = Str::slug($title, '-');
+
+        // store data
+        $new_post = new Post;
+        $new_post->fill($data);
+        $new_post->user_id = $user_id;
+        $new_post->slug = $slug;
+
+        $saved_post = $new_post->save();
+
+        if ($saved_post) {
+
+            return redirect()->route('admin.posts.index')->with('success', $new_post->title);
+        }
+
+
+
     }
 
     /**
@@ -88,5 +112,16 @@ class PostsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Validation rules
+     */
+    private function validation_rules() {
+
+        return [
+            'title' => 'required',
+            'body' => 'required'
+        ];
     }
 }

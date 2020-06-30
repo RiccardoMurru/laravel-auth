@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class PostsController extends Controller
 {
@@ -57,6 +58,12 @@ class PostsController extends Controller
         $new_post->fill($data);
         $new_post->user_id = $user_id;
         $new_post->slug = $slug;
+
+        
+
+        // store image
+        $data['img_path'] = Storage::disk('public')->put('images', $data['img_path']);
+        $new_post->img_path = $data['img_path'];
 
         $saved_post = $new_post->save();
 
@@ -121,7 +128,8 @@ class PostsController extends Controller
 
         return [
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            'img_path' => 'image'
         ];
     }
 }

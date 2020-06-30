@@ -15,6 +15,14 @@
     <div class="post my-3 p-3 border border-info rounded"">
         <span>ID: {{ $post->id }}</span>
         <h2>{{ $post->title }}</h2>
+
+        {{-- se immagine presente --}}
+        @if (!empty($post->img_path))
+            <img class="rounded" src="{{ asset('storage') . '/' . $post->img_path}}" alt="{{ $post->title }}">
+        @else
+            <p>No image available</p>
+        @endif
+
         <p>{{ $post->body }}</p>
         <p>Created at: {{ $post->created_at }}</p>
         <p>Updated at: {{ $post->updated_at }}</p>

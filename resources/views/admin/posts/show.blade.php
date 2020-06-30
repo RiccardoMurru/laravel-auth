@@ -2,11 +2,17 @@
 
 @section('content')
 <div class="container">
-    @if (session('success'))
+    @if (session('save_success'))
     <div class="alert alert-success">
-        New post: {{ session('success') }} created!
+        New post {{ session('save_success') }} created!
     </div>
     @endif
+    @if (session('update_success'))
+    <div class="alert alert-info">
+        Post {{ session('update_success') }} updated!
+    </div>
+    @endif
+
     <div class="d-flex justify-content-between align-items-center>
         <h1 class="my-4">Post Details</h1>
         <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">New Post</a>
@@ -27,7 +33,7 @@
         <p>Created at: {{ $post->created_at }}</p>
         <p>Updated at: {{ $post->updated_at }}</p>
         <div class="actions d-flex justify-content-around align-items-center">
-            <a href="" class="btn btn-outline-primary">Edit</a>
+            <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-outline-primary">Edit</a>
             <a href="" class="btn btn-outline-danger">Delete</a>
         </div>
     </div>

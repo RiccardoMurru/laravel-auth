@@ -21,7 +21,7 @@
         <p>Updated at: {{ $post->updated_at }}</p>
         <div class="actions">
             <a href=" {{ route('admin.posts.show', $post->id) }}" class="btn btn-outline-success">Show</a>
-            <a href="" class="btn btn-outline-primary">Edit</a>
+            <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-outline-primary">Edit</a>
             <a href="" class="btn btn-outline-danger">Delete</a>
         </div>
     </div>

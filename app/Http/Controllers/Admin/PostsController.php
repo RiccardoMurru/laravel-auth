@@ -69,11 +69,8 @@ class PostsController extends Controller
 
         if ($saved_post) {
 
-            return redirect()->route('admin.posts.show', $new_post->id)->with('success', $new_post->title);
+            return redirect()->route('admin.posts.show', $new_post->id)->with('save_success', $new_post->title);
         }
-
-
-
     }
 
     /**
@@ -93,9 +90,9 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -105,9 +102,37 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        // validazione
+        $request->validate($this->validation_rules());
+
+        // acquisizione dati
+        $data = $request->all();
+        $user_id = Auth::id();
+        $title = $data['title'];
+        $slug = Str::slug($title, '-');
+        $data['user_id'] = $user_id;
+        $data['slug'] = $slug;
+
+        // set immagine
+        if (!empty($data['img_path'])) {
+            // delete vecchia immagine
+            if (!empty($post->img_path)) {
+                Storage::disk('public')->delete($post->img_path);
+            }
+            // store nuova immagine
+            $data['img_path'] = Storage::disk('public')->put('images', $data['img_path']);
+            $post->img_path = $data['img_path'];
+        }
+
+        $updated_post = $post->update();
+        
+        if ($updated_post) {
+
+            return redirect()->route('admin.posts.show', $post->id)->with('update_success', $post->title);
+        }
+
     }
 
     /**
